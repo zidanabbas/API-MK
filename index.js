@@ -7,7 +7,6 @@ const app = express();
 const PORT = process.env.PORT;
 
 app.use(express.json());
-app.use(middlewareLogRequest);
 
 app.get("/api", (req, res) => {
   res.send("Hello World!");
