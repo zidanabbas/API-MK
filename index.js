@@ -3,12 +3,20 @@ import "dotenv/config";
 import middlewareLogRequest from "./middleware/log.js";
 import projectRoutes from "./routes/products.js";
 import prisma from "./prisma/index.js";
+import cors from "cors";
 
 const app = express();
 const PORT = process.env.PORT;
 
 app.use(express.json());
 app.use(middlewareLogRequest);
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "https://nasigorengmk.vercel.app/"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 app.get("/v1", (req, res) => {
   res.send("Selamat datang di API Nasi Goreng MK!");
