@@ -3,10 +3,36 @@ import prisma from "../prisma/index.js";
 export const getAllProducts = async (req, res) => {
   try {
     const products = await prisma.Products.findMany({});
-    res.send(products);
+
+    res.status(200).send({
+      message: "Products fetched successfully",
+      data: products,
+    });
   } catch (error) {
     console.error("Error fetching products:", error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).send({
+      message: "Error fetching products",
+      serverMessage: error,
+    });
+  }
+};
+
+export const getProductById = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const product = await prisma.products.findUnique({
+      where: { id: productId },
+    });
+    res.status(200).send({
+      message: "Get product by id successfully",
+      data: product,
+    });
+  } catch (error) {
+    console.error("Error fetching product:", error);
+    res.status(500).send({
+      message: "Error fetching product",
+      serverMessage: error,
+    });
   }
 };
 
@@ -14,6 +40,19 @@ export const createNewProduct = async (req, res) => {
   try {
     const { title, image, price, category, isAvailable, description } =
       req.body;
+    if (
+      !title ||
+      !image ||
+      !price ||
+      !category ||
+      !isAvailable ||
+      !description
+    ) {
+      return res.status(400).send({
+        message: "Missing required fields",
+        data: null,
+      });
+    }
     const newProducts = await prisma.products.create({
       data: {
         title,
@@ -24,10 +63,16 @@ export const createNewProduct = async (req, res) => {
         description,
       },
     });
-    res.status(201).send(newProducts);
+    res.status(201).send({
+      message: "Product created successfully",
+      data: newProducts,
+    });
   } catch (error) {
     console.error("Error creating product:", error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).send({
+      message: "Error creating product",
+      serverMessage: error,
+    });
   }
 };
 
@@ -46,7 +91,10 @@ export const updateProduct = async (req, res) => {
       !isAvailable ||
       !description
     ) {
-      return res.status(400).send("Missing required fields");
+      return res.status(400).send({
+        message: "Missing required fields",
+        data: null,
+      });
     }
 
     const productsData = await prisma.products.update({
@@ -62,10 +110,16 @@ export const updateProduct = async (req, res) => {
         description,
       },
     });
-    res.status(201).send(productsData);
+    res.status(201).send({
+      message: "Product updated successfully",
+      data: productsData,
+    });
   } catch (error) {
     console.error("Error updating products:", error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).send({
+      message: "Error updating products",
+      serverMessage: error,
+    });
   }
 };
 
