@@ -1,9 +1,10 @@
 import express from "express";
 import "dotenv/config";
-import middlewareLogRequest from "./middleware/log.js";
-import projectRoutes from "./routes/products.js";
 import prisma from "./prisma/index.js";
 import cors from "cors";
+import middlewareLogRequest from "./middleware/log.js";
+import projectRoutes from "./routes/products.js";
+import usersRoutes from "./routes/users.js";
 
 const app = express();
 const PORT = process.env.PORT;
@@ -19,16 +20,17 @@ app.use(
 );
 
 app.get("/v1", (req, res) => {
-  res.send("Selamat datang di API Nasi Goreng MK!");
+  res.send("<h1>Selamat datang di API Nasi Goreng MK!</h1>");
 });
 
 app.use("/v1", projectRoutes);
+app.use("/v1", usersRoutes);
 
 prisma
   .$connect()
   .then(() => {
     console.log("Connected to MongoDB");
-    // Memulai server setelah koneksi berhasil didirikan
+    // Memulai server setelah koneksi berhasil di buka
     app.listen(PORT, () => {
       console.log(`express API running on PORT ${PORT}`);
     });
