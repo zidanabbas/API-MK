@@ -23,6 +23,11 @@ export const getProductById = async (req, res) => {
     const product = await prisma.products.findUnique({
       where: { id: productId },
     });
+    if (!product) {
+      return res.status(404).send({
+        message: "Product not found",
+      });
+    }
     res.status(200).send({
       message: "Get product by id successfully",
       data: product,
