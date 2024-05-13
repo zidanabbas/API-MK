@@ -27,14 +27,15 @@ export const login = async (req, res) => {
   });
 
   if (!user) {
-    return res.status(404).send({ message: "User not found" });
+    return res.status(401).send({ message: "Invalid email or password" });
   }
 
   if (!user.password) {
-    return res.status(404).send({ message: "User not found" });
+    return res.status(401).send({ message: "Invalid email or password" });
   }
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
+
   if (isPasswordValid) {
     const payload = { id: user.id, name: user.name, email: user.email };
     const secret = process.env.JWT_SECRET || "secret";
@@ -50,6 +51,6 @@ export const login = async (req, res) => {
       token: token,
     });
   } else {
-    return res.status(403).send({ message: "Wrong password" });
+    return res.status(500).send({ message: "Internal server error" });
   }
 };
