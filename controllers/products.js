@@ -42,29 +42,31 @@ export const getProductById = async (req, res) => {
 };
 
 export const createNewProduct = async (req, res) => {
+  const { title, price, category, isAvailable, description } = req.body;
+
+  //cek apakah field sudah diisi
+  if (!title || !price || !category || !isAvailable || !description) {
+    return res.status(400).send({
+      message: "Missing required fields",
+      data: null,
+    });
+  }
+
+  //cek apakah ada gambar
+  if (!req.file) {
+    return res.status(422).send({
+      message: "Image is required",
+    });
+  }
   try {
-    const { title, image, price, category, isAvailable, description } =
-      req.body;
-    if (
-      !title ||
-      !image ||
-      !price ||
-      !category ||
-      !isAvailable ||
-      !description
-    ) {
-      return res.status(400).send({
-        message: "Missing required fields",
-        data: null,
-      });
-    }
+    // const { image } = req.file.path;
     const newProducts = await prisma.products.create({
       data: {
         title,
-        image,
-        price,
+        image: req.file.path,
+        price: parseFloat(price),
         category,
-        isAvailable,
+        isAvailable: JSON.parse(isAvailable),
         description,
       },
     });
