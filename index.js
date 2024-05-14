@@ -3,8 +3,7 @@ import "dotenv/config";
 import prisma from "./prisma/index.js";
 import cors from "cors";
 import middlewareLogRequest from "./middleware/log.js";
-import { authMiddleware } from "./middleware/auth-middleware.js";
-import projectRoutes from "./routes/products.js";
+import productRoutes from "./routes/products.js";
 import usersRoutes from "./routes/users.js";
 import userServices from "./routes/auth.js";
 
@@ -26,9 +25,9 @@ app.get("/v1", (req, res) => {
   res.send("<h1>Selamat datang di API Nasi Goreng MK!</h1>");
 });
 
-app.use("/v1", projectRoutes);
+app.use("/v1", productRoutes);
 app.use("/v1", userServices);
-app.use("/v1", authMiddleware, usersRoutes);
+app.use("/v1", usersRoutes);
 
 prisma
   .$connect()
