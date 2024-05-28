@@ -9,16 +9,16 @@ datasource db {
 }
 
 model Products {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  title       String
-  image       String?
-  price       Float
-  category    String
-  isAvailable Boolean  @default(false)
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  Orders      Orders[]
+  id           String         @id @default(auto()) @map("_id") @db.ObjectId
+  title        String
+  image        String?
+  price        Float
+  category     String
+  isAvailable  Boolean        @default(false)
+  description  String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  CartProducts CartProducts[]
 }
 
 model Users {
@@ -28,16 +28,23 @@ model Users {
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  Orders    Orders[]
+  role      String
+  Carts     Carts[]
 }
 
-model Orders {
+model Carts {
+  id       String         @id @default(auto()) @map("_id") @db.ObjectId
+  userId   String         @db.ObjectId
+  date     DateTime       @default(now())
+  user     Users          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  products CartProducts[]
+}
+
+model CartProducts {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  pricePaid Float
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-  userId    String   @db.ObjectId
+  cartId    String   @db.ObjectId
   productId String   @db.ObjectId
-  user      Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quantity  Int
+  cart      Carts    @relation(fields: [cartId], references: [id], onDelete: Cascade)
   product   Products @relation(fields: [productId], references: [id], onDelete: Restrict)
 }

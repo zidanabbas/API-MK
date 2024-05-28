@@ -15,7 +15,8 @@ export const getAllUsers = async (req, res) => {
 
 export const createNewUsers = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
+    const userRole = role || "user";
     if (!name || !email || !password) {
       return res.status(400).send({
         message: "Name, email, and password are required",
@@ -27,6 +28,7 @@ export const createNewUsers = async (req, res) => {
         name,
         email,
         password,
+        role: userRole,
       },
     });
     res.status(201).send({
@@ -44,7 +46,7 @@ export const createNewUsers = async (req, res) => {
 
 export const updateUsers = async (req, res) => {
   const { userId } = req.params;
-  const { name, email, password } = req.body;
+  const { name, email, password, role } = req.body;
   try {
     const updateUsers = await prisma.users.update({
       where: {
@@ -54,6 +56,7 @@ export const updateUsers = async (req, res) => {
         name,
         email,
         password,
+        role,
       },
     });
     res.status(200).send({
