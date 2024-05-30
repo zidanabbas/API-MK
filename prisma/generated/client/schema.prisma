@@ -1,0 +1,51 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-1.0.x"]
+  output        = "./generated/client"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Products {
+  id           String         @id @default(auto()) @map("_id") @db.ObjectId
+  title        String
+  image        String?
+  price        Float
+  category     String
+  isAvailable  Boolean        @default(false)
+  description  String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  CartProducts CartProducts[]
+}
+
+model Users {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String   @unique
+  name      String
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  role      String
+  Carts     Carts[]
+}
+
+model Carts {
+  id       String         @id @default(auto()) @map("_id") @db.ObjectId
+  userId   String         @db.ObjectId
+  date     DateTime       @default(now())
+  user     Users          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  products CartProducts[]
+}
+
+model CartProducts {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  cartId    String   @db.ObjectId
+  productId String   @db.ObjectId
+  quantity  Int
+  cart      Carts    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product   Products @relation(fields: [productId], references: [id], onDelete: Restrict)
+}
