@@ -5,11 +5,6 @@
     { "src": "prisma/schema.prisma", "use": "@prisma/cli" },
     { "src": "build.sh", "use": "@vercel/build-script" }
   ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "index.js"
-    }
-  ],
+
   "rewrites": [{ "source": "/(.*)", "destination": "index.js" }]
 }
